@@ -21,7 +21,7 @@
         }
 
         .glass {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.06);
             backdrop-filter: blur(24px);
         }
 
@@ -34,57 +34,71 @@
         }
 
         .reps-box {
-            font-size: 2.1rem;
+            font-size: 1.85rem;
             font-weight: 700;
+            width: 110px;
+        }
+
+        @media (max-width: 640px) {
+            .reps-box {
+                font-size: 1.6rem;
+                width: 90px;
+            }
         }
     </style>
 </head>
 <body class="hero-bg text-white min-h-screen pb-24">
-    <div class="max-w-3xl mx-auto px-6 pt-10">
-        <div class="flex items-center justify-between mb-12">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between mb-10 sm:mb-12">
             <div>
-                <h1 class="title-font text-5xl font-bold tracking-tighter">LUMEN</h1>
-                <p class="text-slate-400 -mt-1">Entraînement Maison</p>
+                <h1 class="title-font text-4xl sm:text-5xl font-bold tracking-tighter">LUMEN</h1>
+                <p class="text-slate-400 text-sm sm:text-base -mt-1">Entraînement Maison</p>
             </div>
-            <div id="current-date" class="text-right text-slate-400"></div>
+            <div id="current-date" class="text-right text-slate-400 text-sm sm:text-base"></div>
         </div>
 
-        <div class="flex justify-center mb-12">
-            <div class="relative w-44 h-44">
-                <svg class="w-44 h-44" viewBox="0 0 100 100">
+        <!-- Progress Circle -->
+        <div class="flex justify-center mb-10 sm:mb-12">
+            <div class="relative w-36 h-36 sm:w-44 sm:h-44">
+                <svg class="w-36 h-36 sm:w-44 sm:h-44" viewBox="0 0 100 100">
                     <circle cx="50" cy="50" r="44" fill="none" stroke="#334155" stroke-width="9"/>
                     <circle id="progress-circle" cx="50" cy="50" r="44" fill="none" 
                             stroke="#67e8f9" stroke-width="9" stroke-dasharray="276" 
                             stroke-dashoffset="276" stroke-linecap="round"/>
                 </svg>
                 <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <div id="progress-text" class="text-6xl font-bold text-cyan-300">0</div>
+                    <div id="progress-text" class="text-5xl sm:text-6xl font-bold text-cyan-300">0</div>
                     <div class="text-xs tracking-widest text-slate-400 -mt-1">COMPLET</div>
                 </div>
             </div>
         </div>
 
-        <div id="exercises-list" class="space-y-6"></div>
+        <!-- Exercises -->
+        <div id="exercises-list" class="space-y-5 sm:space-y-6"></div>
 
-        <div class="mt-12 flex justify-center">
+        <!-- Bouton Valider -->
+        <div class="mt-10 sm:mt-12 px-4">
             <button onclick="validateWorkout()" 
-                    class="w-full max-w-md py-6 bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-300 hover:to-violet-400 text-black font-bold text-xl rounded-3xl transition-all active:scale-95 shadow-xl shadow-cyan-500/30">
+                    class="w-full py-6 bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-300 hover:to-violet-400 text-black font-bold text-lg sm:text-xl rounded-3xl transition-all active:scale-95 shadow-2xl shadow-cyan-500/30">
                 VALIDER L'ENTRAÎNEMENT
             </button>
         </div>
 
-        <div class="mt-16 glass border border-white/10 rounded-3xl p-8 grid grid-cols-3 gap-8 text-center">
+        <!-- Stats -->
+        <div class="mt-12 sm:mt-16 glass border border-white/10 rounded-3xl p-6 sm:p-8 grid grid-cols-3 gap-6 sm:gap-8 text-center">
             <div>
-                <div id="total-reps" class="text-4xl font-bold text-orange-400">0</div>
-                <div class="text-xs text-slate-400 mt-1 tracking-widest">RÉPS</div>
+                <div id="total-reps" class="text-3xl sm:text-4xl font-bold text-orange-400">0</div>
+                <div class="text-xs sm:text-sm text-slate-400 mt-1 tracking-widest">RÉPS</div>
             </div>
             <div>
-                <div id="total-time" class="text-4xl font-bold text-sky-400">0</div>
-                <div class="text-xs text-slate-400 mt-1 tracking-widest">MIN</div>
+                <div id="total-time" class="text-3xl sm:text-4xl font-bold text-sky-400">0</div>
+                <div class="text-xs sm:text-sm text-slate-400 mt-1 tracking-widest">MIN</div>
             </div>
             <div>
-                <div id="streak" class="text-4xl font-bold text-violet-400">8</div>
-                <div class="text-xs text-slate-400 mt-1 tracking-widest">SÉRIE</div>
+                <div id="streak" class="text-3xl sm:text-4xl font-bold text-violet-400">8</div>
+                <div class="text-xs sm:text-sm text-slate-400 mt-1 tracking-widest">SÉRIE</div>
             </div>
         </div>
     </div>
@@ -111,30 +125,30 @@
 
             exercises.forEach((ex, i) => {
                 const card = document.createElement("div");
-                card.className = `exercise-card glass border ${ex.completed ? 'border-cyan-400' : 'border-white/10'} rounded-3xl p-8 flex items-center gap-8`;
+                card.className = `exercise-card glass border ${ex.completed ? 'border-cyan-400' : 'border-white/10'} rounded-3xl p-6 sm:p-8 flex items-center gap-6 sm:gap-8`;
                 
                 card.innerHTML = `
                     <div onclick="toggleComplete(${i}); event.stopImmediatePropagation()" 
-                         class="w-14 h-14 rounded-2xl flex items-center justify-center text-4xl cursor-pointer transition-all
+                         class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-4xl cursor-pointer transition-all flex-shrink-0
                          ${ex.completed ? 'bg-cyan-500 text-black' : 'bg-slate-800 border border-white/20'}">
                         ${ex.completed ? '✓' : ex.icon}
                     </div>
                     
-                    <div class="flex-1">
-                        <div class="text-2xl font-semibold">${ex.name}</div>
+                    <div class="flex-1 min-w-0">
+                        <div class="text-lg sm:text-2xl font-semibold truncate">${ex.name}</div>
                         <div class="text-slate-400 text-sm">${ex.sets} séries</div>
                     </div>
 
-                    <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
                         <button onclick="changeReps(${i}, -5)" 
-                                class="w-11 h-11 bg-white/10 hover:bg-white/20 text-xl font-bold rounded-2xl transition-all active:scale-90">-</button>
+                                class="w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 text-lg font-bold rounded-2xl transition-all active:scale-90">-</button>
                         
                         <input type="number" value="${ex.reps}" 
                                oninput="updateReps(${i}, this.value)"
-                               class="reps-box bg-transparent w-28 text-center focus:outline-none">
+                               class="reps-box bg-transparent text-center focus:outline-none border border-transparent focus:border-cyan-400 rounded-2xl px-2">
                         
                         <button onclick="changeReps(${i}, 5)" 
-                                class="w-11 h-11 bg-white/10 hover:bg-white/20 text-xl font-bold rounded-2xl transition-all active:scale-90">+</button>
+                                class="w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 text-lg font-bold rounded-2xl transition-all active:scale-90">+</button>
                     </div>
                 `;
                 container.appendChild(card);
@@ -171,27 +185,21 @@
             const completedCount = exercises.filter(e => e.completed).length;
             
             if (completedCount === 0) {
-                alert("Tu n'as validé aucun exercice. Commence par en cocher quelques-uns !");
+                alert("Tu n'as validé aucun exercice pour le moment.");
                 return;
             }
 
-            if (confirm("Valider cet entraînement ?\nTout sera réinitialisé pour demain.")) {
-                // Sauvegarde simulée (tu peux améliorer plus tard)
-                console.log("Entraînement validé !");
-                
-                // Réinitialisation
+            if (confirm("Valider cet entraînement ?\n\nTout sera réinitialisé pour demain.")) {
                 exercises.forEach(ex => {
                     ex.reps = 0;
                     ex.completed = false;
                 });
-
-                alert("✅ Entraînement validé !\n\nBonne récupération. À demain ! 💪");
                 
+                alert("✅ Entraînement validé avec succès !\nBonne récupération 💪");
                 renderExercises();
             }
         }
 
-        // Initialisation
         window.onload = () => {
             formatDate();
             renderExercises();
