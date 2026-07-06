@@ -3,16 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entraînement</title>
+    <title>LUMEN • Training</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        /* Ton code CSS ici */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .title-font {
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        .hero-bg {
+            background: linear-gradient(to bottom, #0f172a, #1e0b2c);
+        }
+
+        .glass {
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(24px);
+        }
+
+        .exercise-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .exercise-card:hover {
+            transform: scale(1.02) translateY(-4px);
+        }
+
+        .reps-box {
+            font-size: 2.1rem;
+            font-weight: 700;
+        }
     </style>
 </head>
-<body>
-    <!-- Ton code HTML ici -->
-    
+<body class="hero-bg text-white min-h-screen pb-24">
+    <div class="max-w-3xl mx-auto px-6 pt-10">
+        <div class="flex items-center justify-between mb-12">
+            <div>
+                <h1 class="title-font text-5xl font-bold tracking-tighter">LUMEN</h1>
+                <p class="text-slate-400 -mt-1">Entraînement Maison</p>
+            </div>
+            <div id="current-date" class="text-right text-slate-400"></div>
+        </div>
+
+        <div class="flex justify-center mb-12">
+            <div class="relative w-44 h-44">
+                <svg class="w-44 h-44" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="44" fill="none" stroke="#334155" stroke-width="9"/>
+                    <circle id="progress-circle" cx="50" cy="50" r="44" fill="none" 
+                            stroke="#67e8f9" stroke-width="9" stroke-dasharray="276" 
+                            stroke-dashoffset="276" stroke-linecap="round"/>
+                </svg>
+                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                    <div id="progress-text" class="text-6xl font-bold text-cyan-300">0</div>
+                    <div class="text-xs tracking-widest text-slate-400 -mt-1">COMPLET</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="exercises-list" class="space-y-6"></div>
+
+        <div class="mt-12 flex justify-center">
+            <button onclick="validateWorkout()" 
+                    class="w-full max-w-md py-6 bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-300 hover:to-violet-400 text-black font-bold text-xl rounded-3xl transition-all active:scale-95 shadow-xl shadow-cyan-500/30">
+                VALIDER L'ENTRAÎNEMENT
+            </button>
+        </div>
+
+        <div class="mt-16 glass border border-white/10 rounded-3xl p-8 grid grid-cols-3 gap-8 text-center">
+            <div>
+                <div id="total-reps" class="text-4xl font-bold text-orange-400">0</div>
+                <div class="text-xs text-slate-400 mt-1 tracking-widest">RÉPS</div>
+            </div>
+            <div>
+                <div id="total-time" class="text-4xl font-bold text-sky-400">0</div>
+                <div class="text-xs text-slate-400 mt-1 tracking-widest">MIN</div>
+            </div>
+            <div>
+                <div id="streak" class="text-4xl font-bold text-violet-400">8</div>
+                <div class="text-xs text-slate-400 mt-1 tracking-widest">SÉRIE</div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Ton code JavaScript ici
+        let exercises = [
+            { id: 1, name: "Pompes", icon: "💪", reps: 25, sets: 4, completed: false },
+            { id: 2, name: "Abdos Crunch", icon: "🌀", reps: 40, sets: 4, completed: false },
+            { id: 3, name: "Planche", icon: "🪨", reps: 60, sets: 3, completed: false, unit: "s" },
+            { id: 4, name: "Squats", icon: "🦵", reps: 30, sets: 4, completed: false },
+            { id: 5, name: "Fentes", icon: "🚶", reps: 20, sets: 3, completed: false },
+            { id: 6, name: "Burpees", icon: "🔥", reps: 12, sets: 3, completed: false }
+        ];
+
+        function formatDate() {
+            const date = new Date();
+            document.getElementById("current-date").innerHTML = 
+                date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        }
+
+        function renderExercises() {
+            const container = document.getElementById("exercises-list");
+            container.innerHTML = "";
+
+            exercises.forEach((ex, i) => {
+                const card = document.createElement("div");
+                card.className = `exercise-card glass border ${ex.completed ? 'border-cyan-400' : 'border-white/10'} rounded-3xl p-8 flex items-center gap-8`;
+                
+                card.innerHTML = `
+                    <div onclick="toggleComplete(${i}); event.stopImmediatePropagation()" 
+                         class="w-14 h-14 rounded-2xl flex items-center justify-center text-4xl cursor-pointer transition-all
+                         ${ex.completed ? 'bg-cyan-500 text-black' : 'bg-slate-800 border border-white/20'}">
+                        ${ex.completed ? '✓' : ex.icon}
+                    </div>
+                    
+                    <div class="flex-1">
+                        <div class="text-2xl font-semibold">${ex.name}</div>
+                        <div class="text-slate-400 text-sm">${ex.sets} séries</div>
+                    </div>
+
+                    <div class="flex items-center gap-4">
+                        <button onclick="changeReps(${i}, -5)" 
+                                class="w-11 h-11 bg-white/10 hover:bg-white/20 text-xl font-bold rounded-2xl transition-all active:scale-90">-</button>
+                        
+                        <input type="number" value="${ex.reps}" 
+                               oninput="updateReps(${i}, this.value)"
+                               class="reps-box bg-transparent w-28 text-center focus:outline-none">
+                        
+                        <button onclick="changeReps(${i}, 5)" 
+                                class="w-11 h-11 bg-white/10 hover:bg-white/20 text-xl font-bold rounded-2xl transition-all active:scale-90">+</button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            updateStats();
+        }
+
+        function toggleComplete(i) {
+            exercises[i].completed = !exercises[i].completed;
+            renderExercises();
+        }
+
+        function changeReps(i, delta) {
+            exercises[i].reps = Math.max(0, exercises[i].reps + delta);
+            renderExercises();
+        }
+
+        function updateReps(i, val) {
+            exercises[i].reps = Math.max(0, parseInt(val) || 0);
+            renderExercises();
+        }
+
+        function updateStats() {
+            const totalReps = exercises.reduce((a, b) => a + b.reps * b.sets, 0);
+            const done = exercises.filter(e => e.completed).length;
+
+            document.getElementById("total-reps").textContent = totalReps;
+            document.getElementById("total-time").textContent = Math.floor(totalReps / 3);
+            document.getElementById("progress-circle").setAttribute("stroke-dashoffset", 276 - (done / 6 * 276));
+            document.getElementById("progress-text").textContent = done;
+        }
+
+        function validateWorkout() {
+            const completedCount = exercises.filter(e => e.completed).length;
+            
+            if (completedCount === 0) {
+                alert("Tu n'as validé aucun exercice. Commence par en cocher quelques-uns !");
+                return;
+            }
+
+            if (confirm("Valider cet entraînement ?\nTout sera réinitialisé pour demain.")) {
+                // Sauvegarde simulée (tu peux améliorer plus tard)
+                console.log("Entraînement validé !");
+                
+                // Réinitialisation
+                exercises.forEach(ex => {
+                    ex.reps = 0;
+                    ex.completed = false;
+                });
+
+                alert("✅ Entraînement validé !\n\nBonne récupération. À demain ! 💪");
+                
+                renderExercises();
+            }
+        }
+
+        // Initialisation
+        window.onload = () => {
+            formatDate();
+            renderExercises();
+        };
     </script>
 </body>
 </html>
