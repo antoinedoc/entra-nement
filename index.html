@@ -3,206 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LUMEN • Training</title>
+    <title>LUMEN — Entraînement Maison</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Space+Grotesk:wght@500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+        
+        :root {
+            --cyan: 103 232 249;
+            --violet: 167 139 250;
+        }
+        
+        * {
+            transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+            transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+            transition-duration: 150ms;
+        }
         
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Inter', system_ui, sans-serif;
+            background: linear-gradient(180deg, #0a0f1c 0%, #1a1428 40%, #0f172a 100%);
+            color: #f1f5f9;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
+        
         .title-font {
             font-family: 'Space Grotesk', sans-serif;
         }
-
-        .hero-bg {
-            background: linear-gradient(to bottom, #0f172a, #1e0b2c);
-        }
-
+        
         .glass {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(24px);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(32px);
+            border: 1px solid rgba(148, 163, 184, 0.15);
         }
-
+        
+        .neon-text {
+            text-shadow: 
+                0 0 10px rgb(103 232 249),
+                0 0 20px rgb(103 232 249),
+                0 0 40px rgb(167 139 250);
+        }
+        
         .exercise-card {
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
         }
         
         .exercise-card:hover {
-            transform: scale(1.02) translateY(-4px);
+            transform: translateY(-12px) scale(1.015);
+            box-shadow: 0 35px 70px -20px rgb(103 232 249 / 0.3);
         }
-
-        .reps-box {
-            font-size: 1.85rem;
+        
+        .reps-input {
+            font-size: 1.75rem;
             font-weight: 700;
-            width: 110px;
+            width: 115px;
+            text-align: center;
         }
-
-        @media (max-width: 640px) {
-            .reps-box {
-                font-size: 1.6rem;
-                width: 90px;
-            }
+        
+        .progress-ring-circle {
+            transition: stroke-dashoffset 1.2s ease;
+        }
+        
+        .tab-active {
+            background-color: rgb(15 23 42);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.3);
+        }
+        
+        .fade-in {
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .history-item {
+            transition: all 0.3s ease;
+        }
+        
+        .history-item:hover {
+            transform: scale(1.02);
         }
     </style>
 </head>
-<body class="hero-bg text-white min-h-screen pb-24">
-    <div class="max-w-3xl mx-auto px-4 sm:px-6 pt-8 sm:pt-12">
-        
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-10 sm:mb-12">
-            <div>
-                <h1 class="title-font text-4xl sm:text-5xl font-bold tracking-tighter">LUMEN</h1>
-                <p class="text-slate-400 text-sm sm:text-base -mt-1">Entraînement Maison</p>
-            </div>
-            <div id="current-date" class="text-right text-slate-400 text-sm sm:text-base"></div>
-        </div>
+<body>
+    <!-- Background decoration -->
+    <div class="fixed inset-0 pointer-events-none">
+        <div class="absolute top-20 left-10 w-96 h-96 bg-cyan-400 rounded-full mix-blend-screen filter blur-3xl opacity-10"></div>
+        <div class="absolute bottom-32 right-20 w-80 h-80 bg-violet-400 rounded-full mix-blend-screen filter blur-3xl opacity-10"></div>
+    </div>
 
-        <!-- Progress Circle -->
-        <div class="flex justify-center mb-10 sm:mb-12">
-            <div class="relative w-36 h-36 sm:w-44 sm:h-44">
-                <svg class="w-36 h-36 sm:w-44 sm:h-44" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="44" fill="none" stroke="#334155" stroke-width="9"/>
-                    <circle id="progress-circle" cx="50" cy="50" r="44" fill="none" 
-                            stroke="#67e8f9" stroke-width="9" stroke-dasharray="276" 
-                            stroke-dashoffset="276" stroke-linecap="round"/>
-                </svg>
-                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                    <div id="progress-text" class="text-5xl sm:text-6xl font-bold text-cyan-300">0</div>
-                    <div class="text-xs tracking-widest text-slate-400 -mt-1">COMPLET</div>
+    <div class="max-w-3xl mx-auto px-5 sm:px-6 pt-8 pb-28 relative z-10">
+
+        <header class="flex justify-between items-center mb-12">
+            <div class="flex items-center gap-x-4">
+                <div class="w-12 h-12 bg-gradient-to-br from-cyan-400 to-violet-500 rounded-3xl flex items-center justify-center text-3xl shadow-xl shadow-cyan-500/40">
+                    ⚡
+                </div>
+                <div>
+                    <h1 class="title-font text-5xl font-bold tracking-tighter neon-text">LUMEN</h1>
+                    <p class="text-slate-400 text-sm -mt-1.5">Discipline • Progression • Résultats</p>
                 </div>
             </div>
-        </div>
+            
+            <div class="flex bg-slate-900/70 rounded-3xl p-1 border border-white/10">
+                <button onclick="switchTab(0)" id="tab0" 
+                        class="tab-active px-7 py-3 rounded-3xl font-medium text-sm flex items-center gap-2">
+                    <i class="fas fa-sun"></i>
+                    <span>Aujourd'hui</span>
+                </button>
+                <button onclick="switchTab(1)" id="tab1" 
+                        class="px-7 py-3 rounded-3xl font-medium text-sm flex items-center gap-2">
+                    <i class="fas fa-history"></i>
+                    <span>Historique</span>
+                </button>
+            </div>
+        </header>
 
-        <!-- Exercises -->
-        <div id="exercises-list" class="space-y-5 sm:space-y-6"></div>
+        <div id="content-0">
+            <div class="flex justify-center mb-14">
+                <div class="relative w-[210px] h-[210px]">
+                    <svg width="210" height="210" class="rotate-[-90deg]">
+                        <circle cx="105" cy="105" r="92" fill="none" stroke="#1e2937" stroke-width="18"/>
+                        <circle id="progress-main" cx="105" cy="105" r="92" fill="none" 
+                                stroke="url(#progressGrad)" stroke-width="18"
+                                stroke-dasharray="578" stroke-dashoffset="578"
+                                stroke-linecap="round" class="progress-ring-circle"/>
+                        <defs>
+                            <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#67e8f9"/>
+                                <stop offset="100%" stop-color="#c084fc"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <div id="progress-number" class="text-7xl font-bold text-white">0</div>
+                        <div class="text-xs tracking-widest text-slate-400 font-medium">/ 6 EXERCICES</div>
+                    </div>
+                </div>
+            </div>
 
-        <!-- Bouton Valider -->
-        <div class="mt-10 sm:mt-12 px-4">
-            <button onclick="validateWorkout()" 
-                    class="w-full py-6 bg-gradient-to-r from-cyan-400 to-violet-500 hover:from-cyan-300 hover:to-violet-400 text-black font-bold text-lg sm:text-xl rounded-3xl transition-all active:scale-95 shadow-2xl shadow-cyan-500/30">
-                VALIDER L'ENTRAÎNEMENT
+            <div id="exercises-container" class="space-y-6"></div>
+
+            <button onclick="validateDailyWorkout()" 
+                    class="mt-14 w-full py-8 rounded-3xl bg-gradient-to-r from-cyan-400 to-fuchsia-500 text-black font-bold text-xl shadow-2xl shadow-cyan-500/40 hover:brightness-110 active:scale-95 flex items-center justify-center gap-3">
+                <i class="fas fa-check-circle"></i>
+                VALIDER L'ENTRAÎNEMENT DU JOUR
             </button>
         </div>
 
-        <!-- Stats -->
-        <div class="mt-12 sm:mt-16 glass border border-white/10 rounded-3xl p-6 sm:p-8 grid grid-cols-3 gap-6 sm:gap-8 text-center">
-            <div>
-                <div id="total-reps" class="text-3xl sm:text-4xl font-bold text-orange-400">0</div>
-                <div class="text-xs sm:text-sm text-slate-400 mt-1 tracking-widest">RÉPS</div>
+        <div id="content-1" class="hidden">
+            <div class="flex justify-between items-baseline mb-8">
+                <h2 class="text-3xl title-font font-semibold">Historique complet</h2>
+                <span id="history-count" class="text-slate-400 text-sm"></span>
             </div>
-            <div>
-                <div id="total-time" class="text-3xl sm:text-4xl font-bold text-sky-400">0</div>
-                <div class="text-xs sm:text-sm text-slate-400 mt-1 tracking-widest">MIN</div>
-            </div>
-            <div>
-                <div id="streak" class="text-3xl sm:text-4xl font-bold text-violet-400">8</div>
-                <div class="text-xs sm:text-sm text-slate-400 mt-1 tracking-widest">SÉRIE</div>
+            
+            <div id="history-list" class="space-y-4"></div>
+            
+            <div id="no-history" class="hidden py-20 text-center">
+                <i class="fas fa-dumbbell text-7xl text-slate-700 mb-6"></i>
+                <p class="text-slate-400">Aucun entraînement enregistré pour le moment.</p>
             </div>
         </div>
     </div>
 
+    <div id="toast" class="hidden fixed bottom-8 left-1/2 -translate-x-1/2 glass px-8 py-5 rounded-3xl shadow-2xl flex items-center gap-4 z-50">
+        <i id="toast-icon" class="text-2xl"></i>
+        <span id="toast-message" class="font-medium"></span>
+    </div>
+
     <script>
-        let exercises = [
+
+        let currentExercises = [
             { id: 1, name: "Pompes", icon: "💪", reps: 25, sets: 4, completed: false },
             { id: 2, name: "Abdos Crunch", icon: "🌀", reps: 40, sets: 4, completed: false },
             { id: 3, name: "Planche", icon: "🪨", reps: 60, sets: 3, completed: false, unit: "s" },
             { id: 4, name: "Squats", icon: "🦵", reps: 30, sets: 4, completed: false },
-            { id: 5, name: "Fentes", icon: "🚶", reps: 20, sets: 3, completed: false },
+            { id: 5, name: "Fentes alternées", icon: "🚶", reps: 20, sets: 3, completed: false },
             { id: 6, name: "Burpees", icon: "🔥", reps: 12, sets: 3, completed: false }
         ];
 
-        function formatDate() {
-            const date = new Date();
-            document.getElementById("current-date").innerHTML = 
-                date.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+        let trainingHistory = [];
+
+        function loadData() {
+            const savedExercises = localStorage.getItem("lumen_current_exercises");
+            if (savedExercises) currentExercises = JSON.parse(savedExercises);
+            
+            const savedHistory = localStorage.getItem("lumen_training_history");
+            if (savedHistory) trainingHistory = JSON.parse(savedHistory);
         }
 
-        function renderExercises() {
-            const container = document.getElementById("exercises-list");
+        function saveData() {
+            localStorage.setItem("lumen_current_exercises", JSON.stringify(currentExercises));
+            localStorage.setItem("lumen_training_history", JSON.stringify(trainingHistory));
+        }
+
+        function renderTodayExercises() {
+            const container = document.getElementById("exercises-container");
             container.innerHTML = "";
 
-            exercises.forEach((ex, i) => {
+            currentExercises.forEach((ex, index) => {
                 const card = document.createElement("div");
-                card.className = `exercise-card glass border ${ex.completed ? 'border-cyan-400' : 'border-white/10'} rounded-3xl p-6 sm:p-8 flex items-center gap-6 sm:gap-8`;
-                
+                card.className = `exercise-card glass rounded-3xl p-7 flex items-center gap-7`;
                 card.innerHTML = `
-                    <div onclick="toggleComplete(${i}); event.stopImmediatePropagation()" 
-                         class="w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center text-4xl cursor-pointer transition-all flex-shrink-0
-                         ${ex.completed ? 'bg-cyan-500 text-black' : 'bg-slate-800 border border-white/20'}">
+                    <div onclick="toggleExerciseComplete(${index}); event.stopImmediatePropagation()" 
+                         class="w-16 h-16 rounded-2xl flex items-center justify-center text-5xl cursor-pointer flex-shrink-0
+                         ${ex.completed ? 'bg-emerald-500 text-black shadow-inner' : 'bg-slate-800 border border-slate-600'}">
                         ${ex.completed ? '✓' : ex.icon}
                     </div>
-                    
-                    <div class="flex-1 min-w-0">
-                        <div class="text-lg sm:text-2xl font-semibold truncate">${ex.name}</div>
-                        <div class="text-slate-400 text-sm">${ex.sets} séries</div>
+                    <div class="flex-1">
+                        <div class="text-2xl font-semibold leading-tight">${ex.name}</div>
+                        <div class="text-slate-400 text-sm mt-1">${ex.sets} séries</div>
                     </div>
-
-                    <div class="flex items-center gap-3 sm:gap-4 flex-shrink-0">
-                        <button onclick="changeReps(${i}, -5)" 
-                                class="w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 text-lg font-bold rounded-2xl transition-all active:scale-90">-</button>
+                    <div class="flex items-center gap-4">
+                        <button onclick="modifyReps(${index}, -5); event.stopImmediatePropagation()" 
+                                class="w-11 h-11 bg-slate-800 hover:bg-slate-700 rounded-2xl text-3xl font-light flex items-center justify-center">-</button>
                         
                         <input type="number" value="${ex.reps}" 
-                               oninput="updateReps(${i}, this.value)"
-                               class="reps-box bg-transparent text-center focus:outline-none border border-transparent focus:border-cyan-400 rounded-2xl px-2">
+                               oninput="setReps(${index}, this.value)"
+                               class="reps-input bg-transparent border border-slate-600 focus:border-cyan-400 rounded-2xl py-2 text-center">
                         
-                        <button onclick="changeReps(${i}, 5)" 
-                                class="w-9 h-9 sm:w-11 sm:h-11 bg-white/10 hover:bg-white/20 text-lg font-bold rounded-2xl transition-all active:scale-90">+</button>
+                        <button onclick="modifyReps(${index}, 5); event.stopImmediatePropagation()" 
+                                class="w-11 h-11 bg-slate-800 hover:bg-slate-700 rounded-2xl text-3xl font-light flex items-center justify-center">+</button>
                     </div>
                 `;
                 container.appendChild(card);
             });
-            updateStats();
-        }
-
-        function toggleComplete(i) {
-            exercises[i].completed = !exercises[i].completed;
-            renderExercises();
-        }
-
-        function changeReps(i, delta) {
-            exercises[i].reps = Math.max(0, exercises[i].reps + delta);
-            renderExercises();
-        }
-
-        function updateReps(i, val) {
-            exercises[i].reps = Math.max(0, parseInt(val) || 0);
-            renderExercises();
-        }
-
-        function updateStats() {
-            const totalReps = exercises.reduce((a, b) => a + b.reps * b.sets, 0);
-            const done = exercises.filter(e => e.completed).length;
-
-            document.getElementById("total-reps").textContent = totalReps;
-            document.getElementById("total-time").textContent = Math.floor(totalReps / 3);
-            document.getElementById("progress-circle").setAttribute("stroke-dashoffset", 276 - (done / 6 * 276));
-            document.getElementById("progress-text").textContent = done;
-        }
-
-        function validateWorkout() {
-            const completedCount = exercises.filter(e => e.completed).length;
             
-            if (completedCount === 0) {
-                alert("Tu n'as validé aucun exercice pour le moment.");
+            updateProgress();
+        }
+
+        function toggleExerciseComplete(index) {
+            currentExercises[index].completed = !currentExercises[index].completed;
+            renderTodayExercises();
+        }
+
+        function modifyReps(index, delta) {
+            currentExercises[index].reps = Math.max(0, currentExercises[index].reps + delta);
+            renderTodayExercises();
+        }
+
+        function setReps(index, value) {
+            currentExercises[index].reps = Math.max(0, parseInt(value) || 0);
+            renderTodayExercises();
+        }
+
+        function updateProgress() {
+            const completed = currentExercises.filter(ex => ex.completed).length;
+            const circumference = 578;
+            const offset = circumference - (completed / 6) * circumference;
+            
+            document.getElementById("progress-main").setAttribute("stroke-dashoffset", offset);
+            document.getElementById("progress-number").textContent = completed;
+        }
+
+        function validateDailyWorkout() {
+            const completedCount = currentExercises.filter(ex => ex.completed).length;
+            
+            if (completedCount < 3) {
+                showToast("warning", "Complète au moins 3 exercices avant de valider.");
                 return;
             }
+            
+            if (!confirm("Valider cet entraînement ?\nTout sera réinitialisé pour demain.")) return;
 
-            if (confirm("Valider cet entraînement ?\n\nTout sera réinitialisé pour demain.")) {
-                exercises.forEach(ex => {
-                    ex.reps = 0;
-                    ex.completed = false;
-                });
-                
-                alert("✅ Entraînement validé avec succès !\nBonne récupération 💪");
-                renderExercises();
-            }
+            const today = new Date();
+            const totalReps = currentExercises.reduce((acc, ex) => acc + (ex.reps * ex.sets), 0);
+
+            trainingHistory.unshift({
+                date: today.toISOString(),
+                displayDate: today.toLocaleDateString('fr-FR', {weekday:'long', day:'numeric', month:'long'}),
+                exercises: JSON.parse(JSON.stringify(currentExercises)),
+                totalReps: totalReps,
+                completed: completedCount
+            });
+
+            if (trainingHistory.length > 60) trainingHistory.pop();
+
+            saveData();
+
+            currentExercises.forEach(ex => {
+                ex.reps = Math.floor(ex.reps * 0.7) || 10;
+                ex.completed = false;
+            });
+
+            showToast("success", "Entraînement validé avec succès !");
+            renderTodayExercises();
+            renderHistory();
         }
 
-        window.onload = () => {
-            formatDate();
-            renderExercises();
+        function renderHistory() {
+            const container = document.getElementById("history-list");
+            container.innerHTML = "";
+            
+            document.getElementById("history-count").textContent = `${trainingHistory.length} séances`;
+
+            if (trainingHistory.length === 0) {
+                document.getElementById("no-history").classList.remove("hidden");
+                return;
+            }
+            
+            document.getElementById("no-history").classList.add("hidden");
+
+            trainingHistory.forEach((entry, idx) => {
+                const item = document.createElement("div");
+                item.className = "history-item glass rounded-3xl p-7 cursor-pointer";
+                item.onclick = () => viewHistoryDetail(idx);
+                item.innerHTML = `
+                    <div class="flex justify-between">
+                        <div>
+                            <div class="font-medium text-lg">${entry.displayDate}</div>
+                            <div class="text-emerald-400 text-sm">${entry.totalReps} répétitions • ${entry.completed}/6</div>
+                        </div>
+                        <div class="text-cyan-300">
+                            <i class="fas fa-chevron-right"></i>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function viewHistoryDetail(index) {
+            const entry = trainingHistory[index];
+            let details = `${entry.displayDate}\n\n`;
+            
+            entry.exercises.forEach(ex => {
+                details += `${ex.icon} ${ex.name} — ${ex.reps}${ex.unit || ""} × ${ex.sets}\n`;
+            });
+            
+            alert(details);
+        }
+
+        function switchTab(tab) {
+            document.getElementById("content-0").classList.toggle("hidden", tab !== 0);
+            document.getElementById("content-1").classList.toggle("hidden", tab !== 1);
+            
+            document.getElementById("tab0").classList.toggle("tab-active", tab === 0);
+            document.getElementById("tab1").classList.toggle("tab-active", tab === 1);
+        }
+
+        function showToast(type, message) {
+            const toast = document.getElementById("toast");
+            const icon = document.getElementById("toast-icon");
+            const text = document.getElementById("toast-message");
+            
+            if (type === "success") {
+                icon.className = "fas fa-check-circle text-emerald-400";
+            } else {
+                icon.className = "fas fa-exclamation-triangle text-amber-400";
+            }
+            
+            text.textContent = message;
+            toast.classList.remove("hidden");
+            
+            setTimeout(() => {
+                toast.classList.add("hidden");
+            }, 3200);
+        }
+
+        window.onload = function() {
+            loadData();
+            renderTodayExercises();
+            renderHistory();
+            switchTab(0);
+            
+            document.addEventListener("keydown", function(e) {
+                if (e.ctrlKey && e.key === "v") {
+                    e.preventDefault();
+                    validateDailyWorkout();
+                }
+            });
         };
     </script>
 </body>
